@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import Webcam from "react-webcam"
+import Webcam from 'react-webcam'
+import axios from 'axios'
 import style from './App.module.css'
 import SleepModeButton from './SleepModeButton'
 import PersonFound from './PersonFound'
@@ -9,7 +10,6 @@ import ReconnectingWebSocket from 'reconnecting-websocket'
 
 function initWs(messageFn = console.log, wsUrl= `ws://${window.location.host}/api/detect`, openFn, closeFn, errFn = console.error) {
   // const ws = new ReconnectingWebSocket(wsUrl, [], options)
-  console.log(wsUrl);
   const ws = new ReconnectingWebSocket(wsUrl, null, {})
   // ws.binaryType = 'arraybuffer'
 
@@ -20,23 +20,15 @@ function initWs(messageFn = console.log, wsUrl= `ws://${window.location.host}/ap
     openFn()
   })
   ws.addEventListener('close', () => {
-    // console.log('closed');
-    // ws._connect()
     closeFn()
   })
   ws.addEventListener('message', (res) => {
-    const message = JSON.parse(res.data)
     if (messageFn) {
-      messageFn(message)
+      messageFn(res.data)
     }
   })
   return ws
 }
-
-// start a websocket (with reconnection)
-// add an icon for the connection status (online\ offline)
-// send current image over ws every few seconds
-// if ws states that a person is found then change the value accordingly
 
 class App extends Component {
   constructor(props){
@@ -45,10 +37,16 @@ class App extends Component {
       onlineStatus: false,
       personExists: false,
     }
+    this.sendImageToServer = this.sendImageToServer.bind(this)
   }
 
   componentDidMount(){
-    initWs(console.log, undefined, ()=>{
+    //TODO: if ws states that a person is found then change the value accordingly
+    this.ws = initWs((exists)=>{
+      this.setState({
+        personExists: exists!=='0',
+      })
+    }, undefined, ()=>{
       this.setState({
         onlineStatus: true,
       })
@@ -57,6 +55,8 @@ class App extends Component {
         onlineStatus: false,
       })
     }, console.error)
+
+    setTimeout(this.sendImageToServer, 1000)
   }
 
   setRef(webcam) {
@@ -64,10 +64,15 @@ class App extends Component {
   }
 
   capture() {
-    const imageSrc = this.webcam.getScreenshot();
-    console.log(imageSrc);
-    // send image to an api which will save it to disk
-  };
+    const image = this.webcam.getScreenshot()
+    axios.post('/api/capture', {image}).catch(console.error)
+  }
+
+  sendImageToServer() {
+    const imageSrc = this.webcam.getScreenshot()
+    this.ws.send(imageSrc)
+    setTimeout(this.sendImageToServer, 500)
+  }
 
   render() {
     const {onlineStatus, personExists} = this.state
