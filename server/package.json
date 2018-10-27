@@ -1,0 +1,50 @@
+{
+  "name": "looker-server",
+  "version": "0.0.1",
+  "description": "ML JS security system",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/deanshub/looker.git"
+  },
+  "keywords": [
+    "Broadlink",
+    "IoT",
+    "remote",
+    "control"
+  ],
+  "author": "David Tao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/deanshub/looker/issues"
+  },
+  "homepage": "https://github.com/deanshub/looker#readme",
+  "dependencies": {
+    "@tensorflow-models/coco-ssd": "^0.1.0",
+    "@tensorflow-models/mobilenet": "^0.2.2",
+    "@tensorflow-models/posenet": "^0.2.3",
+    "@tensorflow/tfjs-node": "^0.1.19",
+    "@types/node": "^7.0.5",
+    "canvas": "^2.0.1",
+    "config": "^1.30.0",
+    "fs-extra": "^6.0.1",
+    "node-fetch": "^2.2.0",
+    "node-telegram-bot-api": "^0.30.0",
+    "xhr2": "^0.1.4"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.5",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1"
+  }
+}

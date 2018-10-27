@@ -1,0 +1,21 @@
+.sleepButton{
+  position: absolute;
+  top: 2em;
+  left: 2em;
+  transition: all 100ms ease-in;
+
+  border: none;
+  padding: 0.5em;
+  font: inherit;
+  font-weight: bold;
+  color: #ffffff;
+  cursor: pointer;
+  outline: inherit;
+}
+
+.sleepButton.off{
+  background: #F44336;
+}
+.sleepButton.on{
+  background: #4CAF50;
+}
