@@ -3,6 +3,7 @@ import Webcam from "react-webcam"
 import style from './App.module.css'
 import SleepModeButton from './SleepModeButton'
 import PersonFound from './PersonFound'
+import Online from './Online'
 
 // start a websocket (with reconnection)
 // add an icon for the connection status (online\ offline)
@@ -31,6 +32,7 @@ class App extends Component {
         />
         <SleepModeButton/>
         <PersonFound value/>
+        <Online status={false}/>
       </div>
     );
   }

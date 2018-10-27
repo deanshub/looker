@@ -1,0 +1,17 @@
+.online{
+  position: absolute;
+  bottom: 2em;
+  right: 2em;
+  transition: all 1s ease-in-out;
+  fill: #8BC34A;
+  width: 4em;
+  height: 4em;
+}
+
+.offline{
+  fill: #F44336;
+}
+
+.hidden{
+  visibility: hidden;
+}
