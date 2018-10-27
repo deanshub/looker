@@ -1,58 +1,23 @@
+import express from 'express'
+import expressWs from 'express-ws'
+import bodyParser from 'body-parser'
+import config from 'config'
 import path from 'path'
-import fs from 'fs-extra'
-import xhr from 'xhr2'
-global.XMLHttpRequest = xhr
-import fetch from 'node-fetch'
-global.fetch = fetch
+import routes from './routes'
 
-import * as tf from '@tensorflow/tfjs'
-import '@tensorflow/tfjs-node'
+// const STATIC_FILES_DIRECTORY = path.join(__dirname,'../client/static')
 
-import {Image, createCanvas} from 'canvas'
-import * as cocoSsd from '@tensorflow-models/coco-ssd'
+const app = express()
+expressWs(app)
 
-async function loadImage(imgPath) {
-  const buffer = await fs.readFile(imgPath)
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onerror = err => reject(err)
-    img.onload = () => resolve(img)
-    img.src = buffer;
-  })
-}
+app.use(bodyParser.json())
+// app.use(express.static(STATIC_FILES_DIRECTORY))
+app.use('/api', routes())
 
-async function look(imgPath) {
-  const img = await loadImage(imgPath)
-  const canvas = createCanvas(img.width, img.height)
-  canvas.getContext('2d').drawImage(img,0,0);
-
-  const net = await cocoSsd.load('mobilenet_v1')
-  const predictions = await net.detect(canvas)
-  return predictions
-}
-
-function personExists(predictions) {
-  // console.log(predictions);
-  return predictions.find(prediction=>prediction.class==='person')
-}
-
-async function run(){
-  const files = [1,2,3,4,5,6,7,8,9,10]
-  for (const fileName of files) {
-    const imgPath = path.join(__dirname,`../data/hole/${fileName}.jpg`)
-    const predictions = await look(imgPath)
-    // console.log(`${fileName}) ${JSON.stringify(predictions,null,2)}`);
-    const exists = personExists(predictions)
-    console.log(`${fileName}) ${exists?'yes':'no'}`);
-  }
-}
-run().catch(console.error)
-
-// look(path.join(__dirname,'../data/hole/1.jpg'))
-// .then(personExists)
-// .then(console.log)
-// .catch(console.error)
-
+const port = config.PORT || 3001
+app.listen(port, () => {
+  console.log(`Listening on port ${port}`);
+})
 
 
 // import botCommander from './botCommander'
