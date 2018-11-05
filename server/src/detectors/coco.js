@@ -26,7 +26,8 @@ async function look(imgPath) {
   const canvas = createCanvas(img.width, img.height)
   canvas.getContext('2d').drawImage(img,0,0);
 
-  const net = await cocoSsd.load('mobilenet_v1')
+  // const net = await cocoSsd.load('mobilenet_v1')
+  const net = await cocoSsd.load('lite_mobilenet_v2')
   const predictions = await net.detect(canvas)
   return predictions
 }

@@ -6,7 +6,7 @@ import SleepModeButton from './SleepModeButton'
 import PersonFound from './PersonFound'
 import Online from './Online'
 import ReconnectingWebSocket from 'reconnecting-websocket'
-
+// import clientDetector from './detectors/coco'
 
 function initWs(messageFn = console.log, wsUrl= `ws://${window.location.host}/api/detect`, openFn, closeFn, errFn = console.error) {
   // const ws = new ReconnectingWebSocket(wsUrl, [], options)
@@ -56,7 +56,7 @@ class App extends Component {
       })
     }, console.error)
 
-    setTimeout(this.sendImageToServer, 1000)
+    // this.detect()
   }
 
   setRef(webcam) {
@@ -74,6 +74,14 @@ class App extends Component {
     setTimeout(this.sendImageToServer, 500)
   }
 
+  // async detect() {
+  //   setTimeout(async()=>{
+  //     // console.log(this.webcam.canvas);
+  //     const predictions = await clientDetector(this.webcam.canvas)
+  //     console.log(predictions);
+  //   },2000)
+  // }
+
   render() {
     const {onlineStatus, personExists} = this.state
 
@@ -83,6 +91,8 @@ class App extends Component {
           className={style.video}
           audio={false}
           screenshotFormat="image/png"
+          screenshotQuality={1}
+          onUserMedia={this.sendImageToServer}
           ref={this.setRef.bind(this)}
         />
         <SleepModeButton/>
