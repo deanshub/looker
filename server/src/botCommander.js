@@ -29,7 +29,7 @@ const bot = new TelegramBot(config.BOT_TOKEN, options);
 const allKeyboardOpts ={
   reply_markup:JSON.stringify({
     keyboard:[
-      ['/off','/cold','/hot','/temp'],
+      ['/capture'],
     ],
     resize_keyboard: true,
     one_time_keyboard: true,
@@ -40,6 +40,10 @@ const allKeyboardOpts ={
 
 export function sendMessage(id, message, extraOps){
   return bot.sendMessage(id, message,  {...allKeyboardOpts, ...extraOps});
+}
+
+export function sendPhoto(id, image, opts) {
+  return bot.sendPhoto(id, image, opts)
 }
 
 let commands = {};

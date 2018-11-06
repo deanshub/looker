@@ -1,7 +1,9 @@
+import config from 'config'
 // import detect from '../detectors/coco'
 import detect from '../detectors/opencv'
 import {saveImage, saveMatImage} from './capture'
-import {Image} from 'canvas'
+import {sendPhoto} from '../botCommander'
+
 let processing = 1
 const OPEN = 1
 
@@ -19,7 +21,7 @@ export default function(ws, req) {
       } catch (e) {
 
       }
-      console.log(exists);
+      // console.log(exists);
 
       if (ws.readyState===OPEN) {
         ws.send(exists?1:0)
@@ -29,7 +31,11 @@ export default function(ws, req) {
         exists.faces.forEach(({x,y,width,height})=>{
           exists.mat.rectangle([x, y], [width, height], [0, 0, 255], 3)
         })
-        saveMatImage(exists.mat)
+        const imagePath = saveMatImage(exists.mat)
+        console.log(config.ADMIN_CHAT_ID);
+        if (config.ADMIN_CHAT_ID) {
+          sendPhoto(config.ADMIN_CHAT_ID, imagePath)
+        }
         // saveImage(imgData).catch(console.error)
       }
       // console.log('Done processing!', (new Date() - startTime) ,exists);

@@ -19,5 +19,7 @@ export function saveImage(img) {
 export function saveMatImage(mat) {
   const date = new Date()
   const filename = dateToFileName(date)
-  return mat.save(path.join(__dirname, `../../data/${filename}.png`))
+  const filePath = path.join(__dirname, `../../data/${filename}.png`)
+  mat.save(filePath)
+  return filePath
 }
