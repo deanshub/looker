@@ -53,6 +53,7 @@ class App extends Component {
     }, ()=>{
       this.setState({
         onlineStatus: false,
+        personExists: false,
       })
     }, console.error)
 
