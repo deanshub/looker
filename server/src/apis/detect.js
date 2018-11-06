@@ -1,6 +1,6 @@
 // import detect from '../detectors/coco'
 import detect from '../detectors/opencv'
-import {saveImage} from './capture'
+import {saveImage, saveMatImage} from './capture'
 import {Image} from 'canvas'
 let processing = 1
 const OPEN = 1
@@ -9,20 +9,30 @@ export default function(ws, req) {
   ws.on('message',async (message) => {
     if (processing>0){
       processing--
-      const startTime = new Date()
-      console.log('processing...');
+      // const startTime = new Date()
+      // console.log('processing...');
       const imgData = message.replace(/^data:image\/png;base64,/, '')
 
-      const exists = await detect(new Buffer(imgData, 'base64'))
+      let exists = null
+      try {
+        exists = await detect(new Buffer(imgData, 'base64'))
+      } catch (e) {
+
+      }
       console.log(exists);
 
       if (ws.readyState===OPEN) {
-        ws.send(exists.length>0?1:0)
+        ws.send(exists?1:0)
       }
       if (exists) {
-        saveImage(imgData).catch(console.error)
+
+        exists.faces.forEach(({x,y,width,height})=>{
+          exists.mat.rectangle([x, y], [width, height], [0, 0, 255], 3)
+        })
+        saveMatImage(exists.mat)
+        // saveImage(imgData).catch(console.error)
       }
-      console.log('Done processing!', (new Date() - startTime) ,exists);
+      // console.log('Done processing!', (new Date() - startTime) ,exists);
       processing++
     }
   })

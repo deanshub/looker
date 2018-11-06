@@ -11,7 +11,10 @@ export default async function detect(img) {
     return new Promise((resolve, reject)=>{
       mat.detectObject(cv.FACE_CASCADE, {}, (err, faces)=>{
         if (err) return reject(err)
-        resolve(faces)
+        if (faces.length>0) {
+          resolve({faces, mat})
+        }
+        resolve(null)
       })
     })
   })

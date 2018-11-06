@@ -15,3 +15,9 @@ export function saveImage(img) {
   const filename = dateToFileName(date)
   return fs.writeFile(path.join(__dirname, `../../data/${filename}.png`), img, 'base64')
 }
+
+export function saveMatImage(mat) {
+  const date = new Date()
+  const filename = dateToFileName(date)
+  return mat.save(path.join(__dirname, `../../data/${filename}.png`))
+}
