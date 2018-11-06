@@ -37,5 +37,7 @@ jspm_packages
 .node_repl_history
 
 config/production.json
+config/server.cert
+config/server.key
 
 data/*

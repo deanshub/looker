@@ -8,7 +8,7 @@ import Online from './Online'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 // import clientDetector from './detectors/coco'
 
-function initWs(messageFn = console.log, wsUrl= `ws://${window.location.host}/api/detect`, openFn, closeFn, errFn = console.error) {
+function initWs(messageFn = console.log, wsUrl= `wss://${window.location.host}/api/detect`, openFn, closeFn, errFn = console.error) {
   // const ws = new ReconnectingWebSocket(wsUrl, [], options)
   const ws = new ReconnectingWebSocket(wsUrl, null, {})
   // ws.binaryType = 'arraybuffer'
