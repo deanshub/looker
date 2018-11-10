@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 import Webcam from 'react-webcam'
 import axios from 'axios'
+import ReconnectingWebSocket from 'reconnecting-websocket'
 import style from './App.module.css'
 import SleepModeButton from './SleepModeButton'
 import PersonFound from './PersonFound'
-import Online from './Online'
-import ReconnectingWebSocket from 'reconnecting-websocket'
+import Online, {COMM_STATUS} from './Online'
+
+const videoConstraints = {
+  facingMode: 'environment',
+}
 // import clientDetector from './detectors/coco'
 
 function initWs(messageFn = console.log, wsUrl= `wss://${window.location.host}/api/detect`, openFn, closeFn, errFn = console.error) {
@@ -34,25 +38,25 @@ class App extends Component {
   constructor(props){
     super(props)
     this.state = {
-      onlineStatus: false,
+      onlineStatus: COMM_STATUS.OFFLINE,
       personExists: false,
+      paused: false,
     }
     this.sendImageToServer = this.sendImageToServer.bind(this)
   }
 
   componentDidMount(){
-    //TODO: if ws states that a person is found then change the value accordingly
     this.ws = initWs((exists)=>{
       this.setState({
         personExists: exists!=='0',
       })
     }, undefined, ()=>{
       this.setState({
-        onlineStatus: true,
+        onlineStatus: COMM_STATUS.ONLINE,
       })
     }, ()=>{
       this.setState({
-        onlineStatus: false,
+        onlineStatus: COMM_STATUS.OFFLINE,
         personExists: false,
       })
     }, console.error)
@@ -71,7 +75,9 @@ class App extends Component {
 
   sendImageToServer() {
     const imageSrc = this.webcam.getScreenshot()
-    this.ws.send(imageSrc)
+    if (!this.state.paused) {
+      this.ws.send(imageSrc)
+    }
     setTimeout(this.sendImageToServer, 500)
   }
 
@@ -83,8 +89,19 @@ class App extends Component {
   //   },2000)
   // }
 
+  togglePause(e) {
+    e.stopPropagation()
+    this.setState({
+      paused: !this.state.paused,
+    })
+  }
+
   render() {
-    const {onlineStatus, personExists} = this.state
+    const {onlineStatus, personExists, paused} = this.state
+    let calculatedStatus = onlineStatus
+    if (paused && onlineStatus === COMM_STATUS.ONLINE) {
+      calculatedStatus = COMM_STATUS.PAUSED
+    }
 
     return (
       <div onClick={this.capture.bind(this)}>
@@ -95,10 +112,11 @@ class App extends Component {
           screenshotQuality={1}
           onUserMedia={this.sendImageToServer}
           ref={this.setRef.bind(this)}
+          videoConstraints={videoConstraints}
         />
         <SleepModeButton/>
         <PersonFound value={personExists}/>
-        <Online status={onlineStatus}/>
+        <Online status={calculatedStatus} onClick={this.togglePause.bind(this)}/>
       </div>
     );
   }

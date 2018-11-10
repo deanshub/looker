@@ -6,6 +6,8 @@ import {sendPhoto} from '../botCommander'
 
 let processing = 1
 const OPEN = 1
+const MAX_TIME_DIFF = 10000
+let lastUpdateTime = new Date()
 
 export default function(ws, req) {
   ws.on('message',async (message) => {
@@ -33,8 +35,10 @@ export default function(ws, req) {
         })
         const imagePath = saveMatImage(exists.mat)
         console.log(config.ADMIN_CHAT_ID);
-        if (config.ADMIN_CHAT_ID) {
+        const timeDiff = new Date() - lastUpdateTime
+        if (config.ADMIN_CHAT_ID && timeDiff>MAX_TIME_DIFF) {
           sendPhoto(config.ADMIN_CHAT_ID, imagePath)
+          lastUpdateTime = new Date()
         }
         // saveImage(imgData).catch(console.error)
       }

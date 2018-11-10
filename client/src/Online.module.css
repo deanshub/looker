@@ -8,6 +8,10 @@
   height: 4em;
 }
 
+.paused{
+  fill: #FF9800;
+}
+
 .offline{
   fill: #F44336;
 }
